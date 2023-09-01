@@ -1,0 +1,9 @@
+.zoom_container {
+  transition-property: translate, scale;
+  transform-origin: 0 0;
+}
+
+.zoom_container > * {
+  max-width: 100%;
+  max-height: 100%;
+}
