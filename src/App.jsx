@@ -1,13 +1,18 @@
+import { TransitionProvider } from "./contexts/transition";
 import ZoomAndPan from "./components/ZoomAndPan";
+import ZoomTools from "./components/ZoomToolbar";
 import "./App.css";
 
 function App() {
   return (
-    <main className="App">
+    <TransitionProvider>
+      <header>
+        <ZoomTools />
+      </header>
       <section>
-        <ZoomAndPan src="sky.jpg" />
-      </section>
-    </main>
+        <ZoomAndPan src="sky.jpg" speed={0.1} />
+      </section>{" "}
+    </TransitionProvider>
   );
 }
 

@@ -3,6 +3,13 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  width: 100%;
+  height: 100%;
+}
+
+header {
+  width: 100%;
+  height: 35px;
 }
 
 section {
@@ -11,4 +18,6 @@ section {
   margin: auto;
   overflow: hidden;
   outline: 1px solid gray;
+  display: flex;
+  align-items: center;
 }

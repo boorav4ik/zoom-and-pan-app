@@ -1,68 +1,92 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import parseTranslate from "../../functions/parseTranslate";
 import stringifyTranslate from "../../functions/stringifyTranslate";
+import { useTransition } from "../../contexts/transition";
 import "./index.css";
 
-function calcTranslate(position, target, scale) {
-  return position - target * scale;
-}
+const getPointerPosition = ({ pageX, pageY }, { offsetLeft, offsetTop }) => ({
+  x: pageX - offsetLeft,
+  y: pageY - offsetTop,
+});
 
-function getMousePosition({ pageX, pageY }, { offsetLeft, offsetTop }) {
-  return { x: pageX - offsetLeft, y: pageY - offsetTop };
-}
+const calcTransition = (position, translate, scale, deltaScale) => {
+  const newScale = scale + deltaScale;
+
+  const calcTranslate = (coordinate) =>
+    position[coordinate] -
+    (newScale * (position[coordinate] - translate[coordinate])) / scale;
+
+  return { scale: newScale, x: calcTranslate("x"), y: calcTranslate("y") };
+};
 
 const ZoomAndPan = ({ src, speed = 0.1 }) => {
-  const containerRef = useRef(null);
+  const [transition, setTransition] = useTransition();
+
+  const [size, setSize] = useState({});
+  const wrapperRef = useRef(null);
+  const canvasRef = useRef(null);
+  const imageRef = useRef(null);
 
   const onWheel = (event) => {
-    event.stopPropagation();
-    if (event.buttons === 2) return;
-    const container = containerRef.current;
-    const { style } = container;
-    const { deltaY } = event;
-    const scale = Number(style.scale || 1);
-    const translate = parseTranslate(style.translate);
-    const point = getMousePosition(event, container);
+    const wrapper = wrapperRef.current;
 
-    const target = {
-      x: (point.x - translate.x) / scale,
-      y: (point.y - translate.y) / scale,
-    };
-    const newScale =
-      scale - 1 * Math.max(-1, Math.min(1, deltaY)) * speed * scale;
+    const deltaScale = -speed * Math.max(-1, Math.min(1, event.deltaY));
 
-    style.scale = newScale;
-    style.translate = stringifyTranslate(
-      calcTranslate(point.x, target.x, newScale),
-      calcTranslate(point.y, target.y, newScale)
+    if (transition.scale <= speed && deltaScale < 0) return;
+
+    const pointer = getPointerPosition(event, wrapper);
+
+    setTransition(
+      calcTransition(
+        pointer,
+        { x: transition.x, y: transition.y },
+        transition.scale,
+        deltaScale
+      )
     );
   };
 
   const onMouseMove = (event) => {
     event.stopPropagation();
-    if (event.buttons === 2) {
-      const container = containerRef.current;
-      const { style } = container;
-      const { movementX, movementY } = event;
-      const translate = parseTranslate(style.translate);
-
-      style.translate = stringifyTranslate(
-        movementX + translate.x,
-        movementY + translate.y
-      );
-    }
+    if (event.buttons !== 2) return;
+    const { movementX, movementY } = event;
+    setTransition({ x: movementX + transition.x, y: movementY + transition.y });
   };
 
+  useEffect(() => {
+    const image = imageRef.current;
+    image.onload = function () {
+      setSize({
+        width: this.naturalWidth,
+        height: this.naturalHeight,
+      });
+    };
+  }, []);
+
   return (
-    <div
-      className="zoom_container"
-      ref={containerRef}
-      onWheel={onWheel}
-      onMouseMove={onMouseMove}
-      onContextMenu={(e) => e.preventDefault()}
-    >
-      <img src={src} />
+    <div className="container">
+      <div
+        className="image_wrapper"
+        ref={wrapperRef}
+        style={{
+          aspectRatio: size.height ? size.width / size.height : "auto",
+          scale: String(transition.scale),
+          translate: stringifyTranslate(transition.x, transition.y),
+        }}
+        onWheel={onWheel}
+        onMouseMove={onMouseMove}
+      >
+        <img
+          ref={imageRef}
+          src={src}
+          onContextMenu={(e) => e.preventDefault()}
+        />
+        <canvas
+          ref={canvasRef}
+          {...size}
+          onContextMenu={(e) => e.preventDefault()}
+        />
+      </div>
     </div>
   );
 };

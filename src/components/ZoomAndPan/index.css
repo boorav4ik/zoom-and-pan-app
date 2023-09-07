@@ -1,9 +1,17 @@
-.zoom_container {
+.image_wrapper {
+  position: relative;
   transition-property: translate, scale;
   transform-origin: 0 0;
 }
 
-.zoom_container > * {
+.image_wrapper > * {
+  position: absolute;
   max-width: 100%;
   max-height: 100%;
+  left: 0;
+}
+
+.container {
+  background-color: cyan;
+  width: 100%;
 }
