@@ -10,7 +10,9 @@ const ZoomTools = () => {
       <select
         name="scale"
         value={scale}
-        onChange={({ target: { value } }) => setTransition({ scale: value })}
+        onChange={({ target: { value } }) =>
+          setTransition({ scale: Number(value) })
+        }
       >
         {SCALE_OPTIONS.map((option) => (
           <option key={option} value={option}>{`${option * 100}%`}</option>

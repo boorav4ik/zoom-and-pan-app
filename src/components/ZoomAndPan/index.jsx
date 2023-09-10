@@ -4,23 +4,25 @@ import stringifyTranslate from "../../functions/stringifyTranslate";
 import { useTransition } from "../../contexts/transition";
 import "./index.css";
 
-const getPointerPosition = ({ pageX, pageY }, { offsetLeft, offsetTop }) => ({
-  x: pageX - offsetLeft,
-  y: pageY - offsetTop,
+const getPointerPosition = (
+  { pageX, pageY },
+  { offsetLeft, offsetTop, clientWidth, clientHeight }
+) => ({
+  x: -0.5 + (pageX - offsetLeft) / clientWidth,
+  y: -0.5 + (pageY - offsetTop) / clientHeight,
 });
 
 const calcTransition = (position, translate, scale, deltaScale) => {
   const newScale = scale + deltaScale;
-
   const calcTranslate = (coordinate) =>
     position[coordinate] -
-    (newScale * (position[coordinate] - translate[coordinate])) / scale;
+    ((position[coordinate] - translate[coordinate]) * newScale) / scale;
 
   return { scale: newScale, x: calcTranslate("x"), y: calcTranslate("y") };
 };
 
 const ZoomAndPan = ({ src, speed = 0.1 }) => {
-  const [transition, setTransition] = useTransition();
+  const [{ scale, ...transition }, setTransition] = useTransition();
 
   const [size, setSize] = useState({});
   const wrapperRef = useRef(null);
@@ -32,15 +34,13 @@ const ZoomAndPan = ({ src, speed = 0.1 }) => {
 
     const deltaScale = -speed * Math.max(-1, Math.min(1, event.deltaY));
 
-    if (transition.scale <= speed && deltaScale < 0) return;
-
-    const pointer = getPointerPosition(event, wrapper);
+    if (scale <= speed && deltaScale < 0) return;
 
     setTransition(
       calcTransition(
-        pointer,
-        { x: transition.x, y: transition.y },
-        transition.scale,
+        getPointerPosition(event, wrapper),
+        transition,
+        scale,
         deltaScale
       )
     );
@@ -50,7 +50,12 @@ const ZoomAndPan = ({ src, speed = 0.1 }) => {
     event.stopPropagation();
     if (event.buttons !== 2) return;
     const { movementX, movementY } = event;
-    setTransition({ x: movementX + transition.x, y: movementY + transition.y });
+    const wrapper = wrapperRef.current;
+
+    setTransition({
+      x: movementX / wrapper.clientWidth + transition.x,
+      y: movementY / wrapper.clientHeight + transition.y,
+    });
   };
 
   useEffect(() => {
@@ -70,7 +75,7 @@ const ZoomAndPan = ({ src, speed = 0.1 }) => {
         ref={wrapperRef}
         style={{
           aspectRatio: size.height ? size.width / size.height : "auto",
-          scale: String(transition.scale),
+          scale: String(scale),
           translate: stringifyTranslate(transition.x, transition.y),
         }}
         onWheel={onWheel}

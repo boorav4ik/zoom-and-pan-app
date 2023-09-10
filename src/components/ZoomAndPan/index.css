@@ -1,7 +1,6 @@
 .image_wrapper {
   position: relative;
   transition-property: translate, scale;
-  transform-origin: 0 0;
 }
 
 .image_wrapper > * {

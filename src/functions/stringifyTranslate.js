@@ -1,3 +1,3 @@
 export default function (x, y) {
-    return `${x}px ${y}px`
+    return `${x * 100}% ${y * 100}%`
 }

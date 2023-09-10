@@ -6,7 +6,6 @@ const RESET = "reset";
 const CHANGE = "change";
 
 function reducer(state, action) {
-  console.log({ state, action });
   switch (action.type) {
     case RESET:
       return initState;
