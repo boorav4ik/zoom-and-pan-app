@@ -1,23 +1,23 @@
-import React from "react";
-import PropTypes from "prop-types";
-import TransitionContext, { initState } from "./context";
+import { useReducer } from 'react'
+import ChildrenPropType from '../../types/children'
+import TransitionContext, { initState } from './context'
 
-const RESET = "reset";
-const CHANGE = "change";
+const RESET = 'reset'
+const CHANGE = 'change'
 
 function reducer(state, action) {
   switch (action.type) {
     case RESET:
-      return initState;
+      return initState
     case CHANGE:
-      return { ...state, ...action.payload };
+      return { ...state, ...action.payload }
     default:
-      return state;
+      return state
   }
 }
 
 const TransitionContextProvider = ({ children }) => {
-  const [state, dispatch] = React.useReducer(reducer, initState);
+  const [state, dispatch] = useReducer(reducer, initState)
 
   return (
     <TransitionContext.Provider
@@ -29,15 +29,11 @@ const TransitionContextProvider = ({ children }) => {
     >
       {children}
     </TransitionContext.Provider>
-  );
-};
+  )
+}
 
 TransitionContextProvider.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node,
-  ]).isRequired,
-};
-
+  children: ChildrenPropType.isRequired,
+}
 
 export default TransitionContextProvider
