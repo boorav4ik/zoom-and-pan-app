@@ -22,7 +22,7 @@ section {
   align-items: center;
 }
 
-.container {
-  background-color: cyan;
-  width: 100%;
+.appbar {
+  display: flex;
+  justify-content: space-around;
 }

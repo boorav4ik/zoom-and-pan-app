@@ -4,12 +4,13 @@ import { useTransition } from '../../contexts/transition'
 import stringifyTranslate from './functions/stringifyTranslate'
 import calcTransition from './functions/calcTransition'
 import getPointerPosition from './functions/getPointerPosition'
+import calcAspectRatio from './functions/calcAspectRatio'
 import './index.css'
 
 const RMB = 2
 
 const ZoomAndPan = ({ children: Content, speed = 0.1 }) => {
-  const [aspectRatio, setAspectRatio] = useState()
+  const [{ width, height }, setSize] = useState({})
   const [transition, setTransition] = useTransition()
   const wrapperRef = useRef(null)
 
@@ -41,24 +42,26 @@ const ZoomAndPan = ({ children: Content, speed = 0.1 }) => {
   }
 
   return (
-    <div
-      className="image_wrapper"
-      ref={wrapperRef}
-      style={{
-        aspectRatio,
-        scale: String(transition.scale),
-        translate: stringifyTranslate(transition.x, transition.y),
-      }}
-      onWheel={onWheel}
-      onMouseMove={onMouseMove}
-    >
-      <Content setAspectRatio={setAspectRatio} />
+    <div className={'znp'.concat(height > width ? ' vertical' : '')}>
+      <div
+        className="znp_wrapper"
+        ref={wrapperRef}
+        style={{
+          aspectRatio: calcAspectRatio(width, height),
+          scale: String(transition.scale),
+          translate: stringifyTranslate(transition.x, transition.y),
+        }}
+        onWheel={onWheel}
+        onMouseMove={onMouseMove}
+      >
+        <Content setSize={setSize} />
+      </div>
     </div>
   )
 }
 
 ZoomAndPan.propTypes = {
-  aspectRatio: PropTypes.number,
+  aspectRatio: PropTypes.string,
   speed: PropTypes.number,
   children: PropTypes.func,
 }

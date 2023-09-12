@@ -1,12 +1,12 @@
 import { useTransition } from '../contexts/transition'
+import Toolbar from './Toolbar'
 
 const SCALE_OPTIONS = [0.5, 1, 1.5, 2, 3, 10]
 
 const ZoomTools = () => {
   const [{ scale }, setTransition, resetTransition] = useTransition()
   return (
-    <div className="zoom-toolbar">
-      <label></label>
+    <Toolbar>
       <select
         name="scale"
         value={scale}
@@ -19,7 +19,7 @@ const ZoomTools = () => {
         ))}
       </select>
       <button onClick={resetTransition}>reset</button>
-    </div>
+    </Toolbar>
   )
 }
 

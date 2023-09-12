@@ -1,9 +1,19 @@
-.image_wrapper {
-  position: relative;
-  transition-property: translate, scale;
+.znp {
+  width: 100%;
+  text-align: -webkit-center;
 }
 
-.image_wrapper > * {
+.znp.vertical {
+  height: 100%;
+}
+
+.znp_wrapper {
+  position: relative;
+  transition-property: translate, scale;
+  height: -webkit-fill-available;
+}
+
+.znp_wrapper > * {
   position: absolute;
   max-width: 100%;
   max-height: 100%;

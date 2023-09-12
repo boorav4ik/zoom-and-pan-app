@@ -1,35 +1,32 @@
-import { useEffect, useRef } from 'react'
-
+import { useRef } from 'react'
 import PropTypes from 'prop-types'
 
 const eventPreventDefault = (e) => e.preventDefault()
 
-const Content = ({ setAspectRatio }) => {
+const Content = ({ src, setSize = () => undefined }) => {
   const canvasRef = useRef(null)
-  const imageRef = useRef(null)
 
-  useEffect(() => {
-    const image = imageRef.current
+  const onImageLoad = ({ target }) => {
+    const { naturalWidth: width, naturalHeight: height } = target
+
     const canvas = canvasRef.current
+    canvas.width = width
+    canvas.height = height
 
-    image.onload = function () {
-      const { naturalWidth, naturalHeight } = this
-      canvas.width = naturalWidth
-      canvas.height = naturalHeight
+    setSize({ width, height })
+  }
 
-      setAspectRatio(naturalWidth / naturalHeight)
-    }
-  }, [setAspectRatio])
   return (
     <>
-      <img ref={imageRef} src="sky.jpg" onContextMenu={eventPreventDefault} />
+      <img src={src} onLoad={onImageLoad} onContextMenu={eventPreventDefault} />
       <canvas ref={canvasRef} onContextMenu={eventPreventDefault} />
     </>
   )
 }
 
 Content.propTypes = {
-  setAspectRatio: PropTypes.func.isRequired,
+  src: PropTypes.string.isRequired,
+  setSize: PropTypes.func.isRequired,
 }
 
 export default Content
