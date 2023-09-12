@@ -1,6 +1,5 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import PropTypes from 'prop-types'
-import ChildrenPropType from '../../types/children'
 import { useTransition } from '../../contexts/transition'
 import stringifyTranslate from './functions/stringifyTranslate'
 import calcTransition from './functions/calcTransition'
@@ -9,7 +8,8 @@ import './index.css'
 
 const RMB = 2
 
-const ZoomAndPan = ({ children, aspectRatio, speed = 0.1 }) => {
+const ZoomAndPan = ({ children: Content, speed = 0.1 }) => {
+  const [aspectRatio, setAspectRatio] = useState()
   const [transition, setTransition] = useTransition()
   const wrapperRef = useRef(null)
 
@@ -52,7 +52,7 @@ const ZoomAndPan = ({ children, aspectRatio, speed = 0.1 }) => {
       onWheel={onWheel}
       onMouseMove={onMouseMove}
     >
-      {children}
+      <Content setAspectRatio={setAspectRatio} />
     </div>
   )
 }
@@ -60,7 +60,7 @@ const ZoomAndPan = ({ children, aspectRatio, speed = 0.1 }) => {
 ZoomAndPan.propTypes = {
   aspectRatio: PropTypes.number,
   speed: PropTypes.number,
-  children: ChildrenPropType.isRequired,
+  children: PropTypes.func,
 }
 
 export default ZoomAndPan

@@ -1,4 +1,4 @@
-import { useTransition } from '../../contexts/transition'
+import { useTransition } from '../contexts/transition'
 
 const SCALE_OPTIONS = [0.5, 1, 1.5, 2, 3, 10]
 

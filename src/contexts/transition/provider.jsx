@@ -1,5 +1,6 @@
 import { useReducer } from 'react'
-import ChildrenPropType from '../../types/children'
+import PropTypes from 'prop-types'
+
 import TransitionContext, { initState } from './context'
 
 const RESET = 'reset'
@@ -33,7 +34,10 @@ const TransitionContextProvider = ({ children }) => {
 }
 
 TransitionContextProvider.propTypes = {
-  children: ChildrenPropType.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]).isRequired,
 }
 
 export default TransitionContextProvider
