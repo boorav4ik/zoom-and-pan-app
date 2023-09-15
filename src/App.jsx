@@ -6,20 +6,24 @@ import Content from './components/Content'
 import Toolbar from './components/Toolbar'
 import './App.css'
 
-const H = 'https://cojo.ru/wp-content/uploads/2022/12/iarkie-kartiny-3.webp'
-const V =
-  'https://i.pinimg.com/originals/ac/73/56/ac735652b8b0570fb2ce10c871d10f46.jpg'
-
+const SRC = {
+  H: 'https://cojo.ru/wp-content/uploads/2022/12/iarkie-kartiny-3.webp',
+  V: 'https://i.pinimg.com/originals/ac/73/56/ac735652b8b0570fb2ce10c871d10f46.jpg',
+  cat: 'https://i.pinimg.com/236x/7c/50/16/7c5016cfa82fc72b206cb95f2035e6f2.jpg',
+}
 function App() {
-  const [src, setSrc] = useState(V)
+  const [src, setSrc] = useState(SRC.cat)
   return (
     <TransitionProvider>
       <header>
         <div className="appbar">
           <ZoomTools />
           <Toolbar>
-            <button onClick={() => setSrc(H)}>H</button>
-            <button onClick={() => setSrc(V)}>V</button>
+            {Object.keys(SRC).map((key) => (
+              <button key={key} onClick={() => setSrc(SRC[key])}>
+                {key}
+              </button>
+            ))}
           </Toolbar>
         </div>
       </header>

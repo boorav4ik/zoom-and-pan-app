@@ -5,7 +5,6 @@ function greatestCommonDivisor(a, b) {
 export default function (width, height) {
     if (height) {
         const gcb = greatestCommonDivisor(width, height)
-        return `auto ${width / gcb}/${height / gcb}`
+        return `${width / gcb}/${height / gcb}`
     }
-    return "auto"
 }

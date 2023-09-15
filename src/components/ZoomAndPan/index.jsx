@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import FluidContainer from '../FluidContainer'
 import PropTypes from 'prop-types'
 import { useTransition } from '../../contexts/transition'
 import stringifyTranslate from './functions/stringifyTranslate'
@@ -11,7 +12,7 @@ const RMB = 2
 
 const ZoomAndPan = ({ children: Content, speed = 0.1 }) => {
   const [{ width, height }, setSize] = useState({})
-  const [transition, setTransition] = useTransition()
+  const [transition, setTransition, reset] = useTransition()
   const wrapperRef = useRef(null)
 
   const onWheel = (event) => {
@@ -42,21 +43,29 @@ const ZoomAndPan = ({ children: Content, speed = 0.1 }) => {
   }
 
   return (
-    <div className={'znp'.concat(height > width ? ' vertical' : '')}>
+    <FluidContainer>
       <div
         className="znp_wrapper"
         ref={wrapperRef}
-        style={{
-          aspectRatio: calcAspectRatio(width, height),
-          scale: String(transition.scale),
-          translate: stringifyTranslate(transition.x, transition.y),
-        }}
+        style={Object.assign(
+          {
+            aspectRatio: calcAspectRatio(width, height),
+            scale: String(transition.scale),
+            translate: stringifyTranslate(transition.x, transition.y),
+          },
+          width > height ? { width, height: 'auto' } : { height, width: 'auto' }
+        )}
         onWheel={onWheel}
         onMouseMove={onMouseMove}
       >
-        <Content setSize={setSize} />
+        <Content
+          setSize={(...args) => {
+            reset()
+            setSize(...args)
+          }}
+        />
       </div>
-    </div>
+    </FluidContainer>
   )
 }
 
