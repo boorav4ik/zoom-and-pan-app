@@ -14,6 +14,12 @@ const ZoomTools = () => {
           setTransition({ scale: Number(value) })
         }
       >
+        {!(scale in SCALE_OPTIONS) && (
+          <option key="custom" value={0}>
+            {`${Math.round(scale * 100)}%`}
+          </option>
+        )}
+
         {SCALE_OPTIONS.map((option) => (
           <option key={option} value={option}>{`${option * 100}%`}</option>
         ))}
